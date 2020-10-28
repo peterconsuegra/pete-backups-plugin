@@ -45,7 +45,7 @@ class PeteBackupsController extends Controller
 		
 		$user = Auth::user();
 		
-		$backups = Backup::orderBy('backups.created_at', 'asc')
+		$backups = Backup::orderBy('backups.created_at', 'desc')
 			    ->select(DB::raw('backups.id, backups.schedulling, backups.file_name,sites.name, sites.url'))
 				->join('sites', 'sites.id', '=', 'backups.site_id')
 				->where("sites.user_id",$user->id)->get();
@@ -59,21 +59,22 @@ class PeteBackupsController extends Controller
 		
 		$user = Auth::user();
 		$backup_label = Input::get('backup_label');
-		$site_to_clone_id = Input::get('site_to_clone_id');
+		$site_id = Input::get('site_id');
 		$backup_label = preg_replace("/\s+/", "", $backup_label);
 		
 		if($backup_label == ""){
 			return response()->json(['message'=> "Empty Label"]);
 		}
 		
-		$check_backup = Backup::where("site_id",$site_to_clone_id)->where("schedulling",$backup_label)->first();
+		$check_backup = Backup::where("site_id",$site_id)->where("schedulling",$backup_label)->first();
 		if(isset($check_backup)){
 			return response()->json(['message'=> "Label already used"]);
 		}
 		
-		$site_to_clone = Site::findOrFail($site_to_clone_id);
-		$backup = $site_to_clone->snapshot_creation($backup_label);	
-
+		$site = Site::findOrFail($site_id);
+		$backup = $site->snapshot_creation($backup_label);	
+		$backup->save();
+		
 		return response()->json(['ok' => 'OK']);
 	}
 	
