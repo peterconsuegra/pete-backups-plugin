@@ -1,6 +1,6 @@
 {
     "name": "peteconsuegra/pete-backups-plugin",
-    "description": "Add demo behavior to Pete",
+    "description": "Backups feature for WordPress Pete",
     "license": "MIT",
     "authors": [
         {
