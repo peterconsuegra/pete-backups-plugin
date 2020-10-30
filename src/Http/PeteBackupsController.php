@@ -22,11 +22,11 @@ class PeteBackupsController extends Controller
 	public function __construct(Request $request){
 	    
 	    $this->middleware('auth');
-		$dashboard_url = env("DASHBOARD_URL");
+		$dashboard_url = env("PETE_DASHBOARD_URL");
 		$viewsw = "/sites";
 		
 		//DEBUGING PARAMS
-		$debug = env('DEBUG');
+		$debug = env('PETE_DEBUG');
 		if($debug == "active"){
 			$inputs = $request->all();
 			Log::info($inputs);
