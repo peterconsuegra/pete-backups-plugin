@@ -6,5 +6,5 @@
 	ignorecase = true
 	precomposeunicode = true
 [remote "origin"]
-	url = https://github.com/peterconsuegra/wordpress-importer-plugin.git
+	url = https://github.com/peterconsuegra/pete-backups-plugin.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
