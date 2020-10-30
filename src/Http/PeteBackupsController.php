@@ -35,29 +35,27 @@ class PeteBackupsController extends Controller
 		$system_vars = parent::__construct();
 		$pete_options = $system_vars["pete_options"];
 		$sidebar_options = $system_vars["sidebar_options"];
-		$current_user = Auth::user(); 
 		$os_distribution = $system_vars["os_distribution"];
-		View::share(compact('dashboard_url','viewsw','pete_options','system_vars','sidebar_options','current_user','os_distribution'));
+		View::share(compact('dashboard_url','viewsw','pete_options','system_vars','sidebar_options','os_distribution'));
 		   
 	}
 	
 	public function index(){
 		
-		$user = Auth::user();
+		$current_user = Auth::user(); 
 		
 		$backups = Backup::orderBy('backups.created_at', 'desc')
 			    ->select(DB::raw('backups.id, backups.schedulling, backups.file_name,sites.name, sites.url'))
 				->join('sites', 'sites.id', '=', 'backups.site_id')
-				->where("sites.user_id",$user->id)->get();
+				->where("sites.user_id",$current_user->id)->get();
 		
 		$viewsw = "/wordpress_backups";
-		return view('pete-backups-plugin::index', compact('backups','viewsw'));
+		return view('pete-backups-plugin::index', compact('backups','viewsw','current_user'));
 		
 	}
 	
 	public function create(){
 		
-		$user = Auth::user();
 		$backup_label = Input::get('backup_label');
 		$site_id = Input::get('site_id');
 		$backup_label = preg_replace("/\s+/", "", $backup_label);
