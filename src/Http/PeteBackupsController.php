@@ -6,7 +6,6 @@ namespace Pete\PeteBackups\Http;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Site;
-use Input;
 use Illuminate\Http\Request;
 use App\PeteOption;
 use App\Backup;
@@ -15,6 +14,7 @@ use Illuminate\Support\Facades\Redirect;
 use Log;
 use View;
 use DB;
+use Illuminate\Support\Facades\Input;
 
 class PeteBackupsController extends Controller
 {
@@ -44,10 +44,7 @@ class PeteBackupsController extends Controller
 		
 		$current_user = Auth::user(); 
 		
-		$backups = Backup::orderBy('backups.created_at', 'desc')
-			    ->select(DB::raw('backups.id, backups.schedulling, backups.file_name,sites.name, sites.url'))
-				->join('sites', 'sites.id', '=', 'backups.site_id')
-				->where("sites.user_id",$current_user->id)->get();
+		$backups = Backup::orderBy('id', 'desc')->get();
 		
 		$viewsw = "/wordpress_backups";
 		return view('pete-backups-plugin::index', compact('backups','viewsw','current_user'));
@@ -109,7 +106,8 @@ class PeteBackupsController extends Controller
 	
 	public function destroy(){
 		
-		$backup = Backup::findOrFail(Input::get('backup_id'));
+		$backup_id = Input::get('backup_id');
+		$backup = Backup::findOrFail($backup_id);
 		$backup->delete();
 		return Redirect::to("/wordpress_backups");
 		

@@ -135,7 +135,7 @@
 						$.ajax({
 							url: "/wordpress_backups/restore",
 							dataType: 'JSON',
-							type: 'POST',
+							type: 'GET',
 							data: {backup_domain : backup_domain, backup_id: backup_id},
 							success : function(result) {
 								
