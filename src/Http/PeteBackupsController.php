@@ -92,8 +92,8 @@ class PeteBackupsController extends Controller
 		$backup = Backup::findOrFail($backup_id);
 		
 		$base_path = base_path();
-		$backup_file = "$base_path/backups/$backup->site_id/$backup->name-$backup->schedulling.tar.gz";
-			
+		//$backup_file = "$base_path/backups/$backup->site_id/$backup->name-$backup->schedulling.tar.gz";
+		$backup_file = "$base_path/backups/$backup->site_id/$backup->file_name";
 		$new_site = new Site();
 		$new_site->theme = $backup->theme;
 		$new_site->action_name = "Backup Restore";
