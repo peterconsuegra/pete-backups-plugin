@@ -74,35 +74,6 @@ class PeteBackupsController extends Controller
 	}
 	
 	public function restore(Request $request){
-		/*
-		$backup_id = Input::get('backup_id');
-		$backup_domain = Input::get('backup_domain');
-		$backup_domain = preg_replace("/\s+/", "", $backup_domain);
-		$site_name = str_replace(".","",$backup_domain); 
-		
-		if($backup_domain == ""){
-			return response()->json(['message'=> "Empty Domain"]);
-		}
-		
-		$site = Site::where("url",$backup_domain)->first();
-		if(isset($site)){
-			return response()->json(['message'=> "Domain Taken"]);
-		}
-		
-		$backup = Backup::findOrFail($backup_id);
-		
-		$base_path = base_path();
-		//$backup_file = "$base_path/backups/$backup->site_id/$backup->name-$backup->schedulling.tar.gz";
-		$backup_file = "$base_path/backups/$backup->site_id/$backup->file_name";
-		$new_site = new Site();
-		$new_site->theme = $backup->theme;
-		$new_site->action_name = "Backup Restore";
-		$new_site->name = $site_name;
-		$new_site->url = $backup_domain;
-		
-		$new_site->import_wordpress($backup_file);
-		return response()->json(['ok' => 'OK']);
-		*/
 		
 		$request_array = $request->all();
 		$current_user = Auth::user(); 
