@@ -67,14 +67,14 @@ class PeteBackupsController extends Controller
 		}
 		
 		$site = Site::findOrFail($site_id);
-		$backup = $site->snapshot_creation($backup_label);	
+		$backup = $site->create_backup($backup_label);	
 		$backup->save();
 		
 		return response()->json(['ok' => 'OK']);
 	}
 	
-	public function restore(){
-			
+	public function restore(Request $request){
+		/*
 		$backup_id = Input::get('backup_id');
 		$backup_domain = Input::get('backup_domain');
 		$backup_domain = preg_replace("/\s+/", "", $backup_domain);
@@ -92,8 +92,8 @@ class PeteBackupsController extends Controller
 		$backup = Backup::findOrFail($backup_id);
 		
 		$base_path = base_path();
-		$backup_file = "$base_path/backups/$backup->site_id/$backup->name-$backup->schedulling.tar.gz";
-			
+		//$backup_file = "$base_path/backups/$backup->site_id/$backup->name-$backup->schedulling.tar.gz";
+		$backup_file = "$base_path/backups/$backup->site_id/$backup->file_name";
 		$new_site = new Site();
 		$new_site->theme = $backup->theme;
 		$new_site->action_name = "Backup Restore";
@@ -102,6 +102,30 @@ class PeteBackupsController extends Controller
 		
 		$new_site->import_wordpress($backup_file);
 		return response()->json(['ok' => 'OK']);
+		*/
+		
+		$request_array = $request->all();
+		$current_user = Auth::user(); 
+		$backup = Backup::findOrFail(Input::get('backup_id'));
+		
+		$backup_file = $backup->get_backup_file();	
+		
+		$import_params = array_merge(
+		["template" => $backup_file,
+		"action_name" => "Restore", 
+		"wp_user" => $backup->wp_user, 
+		"theme" => $backup->theme, 
+		"user_id" => $current_user->id, 
+		"first_password" => $backup->first_password,
+		"site_url" =>  $request_array['backup_domain'],
+		"action_name" => "Backup Restore"
+		],$request_array);
+		
+		$new_site = new Site();
+		$new_site->import_wordpress($import_params);
+		
+		return response()->json(['ok' => 'OK']);
+		
 	}
 	
 	public function destroy(){
