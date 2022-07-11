@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Redirect;
 use Log;
 use View;
 use DB;
-use Illuminate\Support\Facades\Input;
 
 class PeteBackupsController extends Controller
 {
@@ -51,10 +50,10 @@ class PeteBackupsController extends Controller
 		
 	}
 	
-	public function create(){
+	public function create(Request $request){
 		
-		$backup_label = Input::get('backup_label');
-		$site_id = Input::get('site_id');
+		$backup_label = $request->input('backup_label');
+		$site_id = $request->input('site_id');
 		$backup_label = preg_replace("/\s+/", "", $backup_label);
 		
 		if($backup_label == ""){
@@ -77,7 +76,7 @@ class PeteBackupsController extends Controller
 		
 		$request_array = $request->all();
 		$current_user = Auth::user(); 
-		$backup = Backup::findOrFail(Input::get('backup_id'));
+		$backup = Backup::findOrFail($request->input('backup_id'));
 		
 		$backup_file = $backup->get_backup_file();	
 		
@@ -99,9 +98,9 @@ class PeteBackupsController extends Controller
 		
 	}
 	
-	public function destroy(){
+	public function destroy(Request $request){
 		
-		$backup_id = Input::get('backup_id');
+		$backup_id = $request->input('backup_id');
 		$backup = Backup::findOrFail($backup_id);
 		$backup->delete();
 		return Redirect::to("/wordpress_backups");
