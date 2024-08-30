@@ -92,6 +92,7 @@ class PeteBackupsController extends Controller
 		],$request_array);
 		
 		$new_site = new Site();
+		$new_site->url = $request_array['backup_domain'];
 		$new_site->import_wordpress($import_params);
 		
 		return response()->json(['ok' => 'OK']);
