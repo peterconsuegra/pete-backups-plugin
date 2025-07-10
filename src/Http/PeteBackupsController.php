@@ -3,7 +3,7 @@
 
 namespace Pete\PeteBackups\Http;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\PeteController;
 use Illuminate\Support\Facades\Auth;
 use App\Site;
 use Illuminate\Http\Request;
@@ -15,29 +15,22 @@ use Log;
 use View;
 use DB;
 
-class PeteBackupsController extends Controller
+class PeteBackupsController extends PeteController
 {
 	
-	public function __construct(Request $request){
-	    
-	    $this->middleware('auth');
-		$dashboard_url = env("PETE_DASHBOARD_URL");
-		$viewsw = "/sites";
-		
-		//DEBUGING PARAMS
-		$debug = env('PETE_DEBUG');
-		if($debug == "active"){
-			$inputs = $request->all();
-			Log::info($inputs);
-		}
-		
-		$system_vars = parent::__construct();
-		$pete_options = $system_vars["pete_options"];
-		$sidebar_options = $system_vars["sidebar_options"];
-		$os_distribution = $system_vars["os_distribution"];
-		View::share(compact('dashboard_url','viewsw','pete_options','system_vars','sidebar_options','os_distribution'));
-		   
-	}
+	public function __construct(Request $request)
+    {
+		//Ensure system vars are loaded
+        parent::__construct();          
+
+        $this->middleware('auth');
+
+        View::share([
+            'dashboard_url' => env('PETE_DASHBOARD_URL'),
+            'viewsw'        => '/import_wordpress'
+        ]);
+    }
+  	
 	
 	public function index(){
 		
@@ -94,7 +87,8 @@ class PeteBackupsController extends Controller
 		$new_site = new Site();
 		$new_site->url = $request_array['backup_domain'];
 		$new_site->import_wordpress($import_params);
-		
+		Site::reload_server();
+
 		return response()->json(['ok' => 'OK']);
 		
 	}
@@ -103,6 +97,7 @@ class PeteBackupsController extends Controller
 		
 		$backup_id = $request->input('backup_id');
 		$backup = Backup::findOrFail($backup_id);
+		$backup->delete_backup();
 		$backup->delete();
 		return Redirect::to("/wordpress_backups");
 		
